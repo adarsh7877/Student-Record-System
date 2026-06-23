@@ -4,11 +4,11 @@ using namespace std;
 
 // Student structure
 struct Student {
-    string rollNo;   // string because roll number has letters and numbers
-    string name;     // string because name can have spaces
-    string age;      // string for now to avoid input errors
-    string course;   // string because course can have spaces
-    string marks;    // string for now to avoid input errors
+    string rollNo;   // Earlier int rollNo was used, but string supports 25scs1003005571
+    string name;     // Earlier cin >> name was used, but getline supports full name
+    string age;
+    string course;
+    string marks;
 };
 
 // Array to store student records
@@ -31,15 +31,34 @@ void showMenu() {
     cout << "Enter your choice: ";
 }
 
-// Function to add student
+// Function to check duplicate roll number
+bool isDuplicateRollNo(string rollNo) {
+    for (int i = 0; i < studentCount; i++) {
+        if (students[i].rollNo == rollNo) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Function to add student record
 void addStudent() {
     if (studentCount >= 100) {
         cout << "Student record limit reached.\n";
         return;
     }
 
+    string rollNo;
+
     cout << "\nEnter roll number: ";
-    getline(cin, students[studentCount].rollNo);
+    getline(cin, rollNo);
+
+    if (isDuplicateRollNo(rollNo)) {
+        cout << "\nA student with this roll number already exists.\n";
+        return;
+    }
+
+    students[studentCount].rollNo = rollNo;
 
     cout << "Enter full name: ";
     getline(cin, students[studentCount].name);
@@ -58,7 +77,7 @@ void addStudent() {
     cout << "\nStudent record added successfully.\n";
 }
 
-// Function to display all students
+// Function to display all student records
 void displayStudents() {
     if (studentCount == 0) {
         cout << "\nNo student records found.\n";
@@ -77,12 +96,49 @@ void displayStudents() {
     }
 }
 
+// Function to search student by roll number
+void searchStudent() {
+    if (studentCount == 0) {
+        cout << "\nNo student records found.\n";
+        return;
+    }
+
+    string searchRollNo;
+    bool found = false;
+
+    cout << "\nEnter roll number to search: ";
+    getline(cin, searchRollNo);
+
+    for (int i = 0; i < studentCount; i++) {
+        if (students[i].rollNo == searchRollNo) {
+            cout << "\n===== Student Found =====\n";
+            cout << "Roll Number: " << students[i].rollNo << endl;
+            cout << "Name: " << students[i].name << endl;
+            cout << "Age: " << students[i].age << endl;
+            cout << "Course: " << students[i].course << endl;
+            cout << "Marks: " << students[i].marks << endl;
+
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        cout << "\nStudent record not found.\n";
+    }
+}
+
 int main() {
     string choice;
 
     do {
         showMenu();
         getline(cin, choice);
+
+        // Fix: if user presses Enter without typing anything, show menu again
+        if (choice == "") {
+            continue;
+        }
 
         if (choice == "1") {
             addStudent();
@@ -91,7 +147,7 @@ int main() {
             displayStudents();
         }
         else if (choice == "3") {
-            cout << "Search Student feature coming soon.\n";
+            searchStudent();
         }
         else if (choice == "4") {
             cout << "Update Student feature coming soon.\n";
